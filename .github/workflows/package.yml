@@ -27,16 +27,22 @@ jobs:
           echo "author=$AUTHOR" >> "$GITHUB_OUTPUT"
           echo "pkg=${NAME}-${VERSION}.difypkg" >> "$GITHUB_OUTPUT"
 
+      # 关键：CLI 二进制必须放到仓库外。放在仓库根目录时它会被算进 difypkg，
+      # 直接触发 "Plugin package size is too large (>50MB)" —— 血泪一次。
       - name: Fetch dify plugin CLI
         run: |
           CLI_VERSION=0.6.10
-          curl -fsSL -o dify-plugin \
+          BIN_DIR="$RUNNER_TEMP/bin"
+          mkdir -p "$BIN_DIR"
+          curl -fsSL -o "$BIN_DIR/dify-plugin" \
             "https://github.com/langgenius/dify-plugin-daemon/releases/download/${CLI_VERSION}/dify-plugin-linux-amd64"
-          chmod +x dify-plugin
-          ./dify-plugin version || true
+          chmod +x "$BIN_DIR/dify-plugin"
+          echo "$BIN_DIR" >> "$GITHUB_PATH"
 
       - name: Package plugin
-        run: ./dify-plugin plugin package . -o "${{ steps.meta.outputs.pkg }}"
+        run: |
+          dify-plugin version || true
+          dify-plugin plugin package . -o "${{ steps.meta.outputs.pkg }}"
 
       - name: Inspect package
         run: |
