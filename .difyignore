@@ -1,0 +1,21 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Git & editor
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Build artefacts / secrets
+build/
+dist/
+*.difypkg
+*.egg-info/
+.env
+
+# OS noise
+.DS_Store
+Thumbs.db

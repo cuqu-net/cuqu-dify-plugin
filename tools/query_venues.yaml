@@ -1,0 +1,62 @@
+identity:
+  name: "query_venues"
+  author: "cuqu-net"
+  label:
+    en_US: "Query Venues"
+    zh_Hans: "查询活动场地"
+    ja_JP: "会場検索"
+description:
+  human:
+    en_US: "Find real venues that have recently hosted CUQU activities."
+    zh_Hans: "查询近期真实办过 CUQU 活动的场地。"
+    ja_JP: "最近 CUQU の交流会が開催された実際の会場を検索します。"
+  llm: >-
+    List real venues that have actually hosted CUQU activities recently. Data is aggregated
+    from CUQU's live activity feed — the platform does not expose a standalone venue database —
+    so results only cover places with recent or upcoming sessions. Each entry carries the venue
+    name, inferred city, coordinates, the categories hosted there, total and upcoming session
+    counts, an estimated capacity inferred from the largest session's participant cap, and the
+    organisers who run groups there. Read-only.
+parameters:
+  - name: city
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: "City"
+      zh_Hans: "城市"
+      ja_JP: "都市"
+    human_description:
+      en_US: "City name without the 市 suffix. Leave empty for all cities."
+      zh_Hans: "城市名（不带“市”字）。留空则不限城市。"
+      ja_JP: "都市名。「市」は付けません。空欄で全国対象。"
+    llm_description: "City name such as 深圳 / 广州 / 香港. Leave empty for all cities."
+  - name: activity_type
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: "Activity type"
+      zh_Hans: "活动类型"
+      ja_JP: "アクティビティ種別"
+    human_description:
+      en_US: "Only keep venues that have hosted this category."
+      zh_Hans: "只保留办过该品类的场地。"
+      ja_JP: "このカテゴリを開催した会場のみに絞り込みます。"
+    llm_description: "Filter venues by hosted category keyword, e.g. 羽毛球 / 桌游."
+  - name: min_capacity
+    type: number
+    required: false
+    form: llm
+    label:
+      en_US: "Minimum capacity"
+      zh_Hans: "最小容量"
+      ja_JP: "最小収容人数"
+    human_description:
+      en_US: "Only keep venues whose estimated capacity is at least this number."
+      zh_Hans: "只保留估算容量不小于该值的场地。"
+      ja_JP: "推定収容人数がこの数以上の会場のみに絞り込みます。"
+    llm_description: "Drop venues whose estimated capacity is below this number."
+extra:
+  python:
+    source: "tools/query_venues.py"

@@ -1,0 +1,19 @@
+identity:
+  author: "cuqu-net"
+  name: "cuqu"
+  label:
+    en_US: "CUQU"
+    zh_Hans: "CUQU找搭子"
+    ja_JP: "CUQU"
+  icon: "icon.svg"
+description:
+  en_US: "Live offline meetup search for the CUQU platform. Read-only, no API key required."
+  zh_Hans: "CUQU 找搭子平台的实时线下活动检索。只读，无需 API Key。"
+  ja_JP: "CUQU プラットフォームのオフライン交流会を検索します。読み取り専用、API キー不要。"
+credentials_for_provider: {}
+tools:
+  - "tools/query_activities.yaml"
+  - "tools/query_venues.yaml"
+extra:
+  python:
+    source: "provider/cuqu.py"

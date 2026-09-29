@@ -1,0 +1,95 @@
+identity:
+  name: "query_activities"
+  author: "cuqu-net"
+  label:
+    en_US: "Query Activities"
+    zh_Hans: "查询线下活动"
+    ja_JP: "アクティビティ検索"
+description:
+  human:
+    en_US: "Search live offline meetups published on the CUQU platform."
+    zh_Hans: "查询 CUQU 找搭子平台上的实时线下活动。"
+    ja_JP: "CUQU プラットフォームのオフライン交流会を検索します。"
+  llm: >-
+    Search real-time offline interest-based meetups published on the CUQU platform
+    (board games, frisbee, hiking, badminton, badminton, fishing, anime, reading clubs and
+    100+ categories) across Shenzhen and 10+ cities in China, including Hong Kong SAR.
+    Returns upcoming sessions sorted by start time, each with title, category, date and time,
+    location, city, price, participant counts, organiser and a public detail URL.
+    Accepts fuzzy dates such as "周末" (weekend), "周六", "明天" (tomorrow) or an explicit
+    YYYY-MM-DD value. Leave city empty to search nationwide. Read-only.
+parameters:
+  - name: activity_type
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: "Activity type"
+      zh_Hans: "活动类型"
+      ja_JP: "アクティビティ種別"
+    human_description:
+      en_US: "Category keyword, e.g. 桌游 (board games), 羽毛球 (badminton), 飞盘 (frisbee)."
+      zh_Hans: "活动类型关键词，例如 桌游、羽毛球、飞盘。"
+      ja_JP: "カテゴリのキーワード。例: ボードゲーム、バドミントン。"
+    llm_description: >-
+      Category keyword such as 桌游, 羽毛球, 飞盘, 徒步, 钓鱼, 二次元. Matched as a substring
+      of the platform's own category field, so use a short keyword rather than a full sentence.
+  - name: city
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: "City"
+      zh_Hans: "城市"
+      ja_JP: "都市"
+    human_description:
+      en_US: "City name without the 市 suffix, e.g. 深圳, 广州, 香港. Leave empty for all cities."
+      zh_Hans: "城市名（不带“市”字），例如 深圳、广州、香港。留空则不限城市。"
+      ja_JP: "都市名。「市」は付けません。空欄で全国対象。"
+    llm_description: >-
+      City name such as 深圳 / 广州 / 香港 / 杭州. Leave empty to search nationwide.
+  - name: keyword
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: "Keyword"
+      zh_Hans: "关键词"
+      ja_JP: "キーワード"
+    human_description:
+      en_US: "Free-text keyword matched against title, location and category."
+      zh_Hans: "自由关键词，匹配标题、地点与品类。"
+      ja_JP: "タイトル・場所・カテゴリを対象とするフリーテキスト検索。"
+    llm_description: >-
+      Free-text keyword searched across activity title, location and category.
+  - name: date
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: "Date"
+      zh_Hans: "日期"
+      ja_JP: "日付"
+    human_description:
+      en_US: 'Supports 周末 / 周六 / 今天 / 明天 / 后天 or YYYY-MM-DD.'
+      zh_Hans: "支持 周末 / 周六 / 今天 / 明天 / 后天，或 YYYY-MM-DD。"
+      ja_JP: "「周末」「今天」「明天」などの自然表現、または YYYY-MM-DD。"
+    llm_description: >-
+      Date filter. Accepts natural language (周末, 周六, 周日, 今天, 明天, 后天) or YYYY-MM-DD.
+      Unrecognised values are reported back and ignored rather than silently returning nothing.
+  - name: limit
+    type: number
+    required: false
+    form: llm
+    label:
+      en_US: "Result limit"
+      zh_Hans: "返回条数"
+      ja_JP: "取得件数"
+    human_description:
+      en_US: "Maximum number of activities to return (1-50, default 20)."
+      zh_Hans: "最多返回多少条活动（1-50，默认 20）。"
+      ja_JP: "取得する件数の上限（1〜50、既定値 20）。"
+    llm_description: "Maximum number of activities to return, 1-50, default 20."
+extra:
+  python:
+    source: "tools/query_activities.py"

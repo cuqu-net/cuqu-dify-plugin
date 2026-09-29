@@ -1,0 +1,52 @@
+name: package difypkg
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read manifest metadata
+        id: meta
+        run: |
+          NAME=$(grep -m1 '^name:' manifest.yaml | awk '{print $2}')
+          VERSION=$(grep -m1 '^version:' manifest.yaml | awk '{print $2}')
+          AUTHOR=$(grep -m1 '^author:' manifest.yaml | awk '{print $2}')
+          echo "name=$NAME version=$VERSION author=$AUTHOR"
+          [ -n "$NAME" ] || { echo "::error::cannot read name from manifest.yaml"; exit 1; }
+          [ -n "$VERSION" ] || { echo "::error::cannot read version from manifest.yaml"; exit 1; }
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "author=$AUTHOR" >> "$GITHUB_OUTPUT"
+          echo "pkg=${NAME}-${VERSION}.difypkg" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch dify plugin CLI
+        run: |
+          CLI_VERSION=0.6.10
+          curl -fsSL -o dify-plugin \
+            "https://github.com/langgenius/dify-plugin-daemon/releases/download/${CLI_VERSION}/dify-plugin-linux-amd64"
+          chmod +x dify-plugin
+          ./dify-plugin version || true
+
+      - name: Package plugin
+        run: ./dify-plugin plugin package . -o "${{ steps.meta.outputs.pkg }}"
+
+      - name: Inspect package
+        run: |
+          mkdir -p out
+          cp "${{ steps.meta.outputs.pkg }}" out/
+          unzip -l "${{ steps.meta.outputs.pkg }}"
+          base64 -w0 "${{ steps.meta.outputs.pkg }}" > out/pkg.b64
+          wc -c out/pkg.b64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.name }}-${{ steps.meta.outputs.version }}
+          path: out/${{ steps.meta.outputs.pkg }}

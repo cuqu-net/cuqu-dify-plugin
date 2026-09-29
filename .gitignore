@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+*.difypkg
+out/
+.env
+.DS_Store
